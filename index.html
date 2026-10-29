@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RGU-MCB | Department of Microbiology - Resource Portal</title>
+  <meta name="description" content="Student-run study materials and resources portal for the Department of Microbiology.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    /* ==========================================================
+       DESIGN TOKENS
+       ========================================================== */
+    :root {
+      --ink: #0a1824;          /* deep lab navy */
+      --ink-2: #102536;
+      --teal: #0e9f9a;         /* primary action */
+      --teal-dark: #0a7c78;
+      --cyan: #3be0e6;         /* bioluminescent accent */
+      
+      --charcoal: #111a22;
+
+      --page-bg: #eef3f5;
+      --surface: #ffffff;
+      --text: #0f1f2e;
+      --muted: #55697a;
+      --border: #d7e2e8;
+      --field-bg: #f7fafb;
+
+      --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+      --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --nav-h: 64px;
+      color-scheme: light dark;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page-bg: #0a1219;
+        --surface: #121e28;
+        --text: #e5eef4;
+        --muted: #93a8b8;
+        --border: #233646;
+        --field-bg: #0d1822;
+      }
+    }
+
+    /* ==========================================================
+       BASE
+       ========================================================== */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: var(--page-bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+    .container { width: min(1180px, 92%); margin-inline: auto; }
+
+    /* ==========================================================
+       STICKY NAVBAR
+       ========================================================== */
+    .navbar {
+      position: sticky; top: 0; z-index: 900;
+      height: var(--nav-h);
+      background: var(--ink);
+      border-bottom: 1px solid rgba(59, 224, 230, 0.18);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    }
+    .navbar .container {
+      height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800; font-size: 1.5rem; letter-spacing: 0.02em;
+      color: #fff; text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .brand i { color: var(--cyan); font-size: 1.2rem; }
+    .menu-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; width: 44px; height: 44px; border-radius: 10px;
+      font-size: 1.25rem; cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .menu-btn:hover { background: rgba(59, 224, 230, 0.15); border-color: var(--cyan); }
+
+    /* Sidebar drawer */
+    .overlay {
+      position: fixed; inset: 0; z-index: 950;
+      background: rgba(4, 10, 16, 0.6);
+      backdrop-filter: blur(2px);
+      opacity: 0; visibility: hidden;
+      transition: opacity .3s ease, visibility .3s;
+    }
+    .overlay.show { opacity: 1; visibility: visible; }
+    .sidebar {
+      position: fixed; top: 0; right: 0; z-index: 1000;
+      width: min(320px, 85vw); height: 100%;
+      background: var(--ink-2);
+      border-left: 1px solid rgba(59, 224, 230, 0.2);
+      transform: translateX(100%);
+      transition: transform .35s cubic-bezier(.7, 0, .2, 1);
+      display: flex; flex-direction: column;
+      box-shadow: -12px 0 40px rgba(0,0,0,0.4);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem;
+    }
+    .close-btn {
+      background: transparent; border: 0; color: #fff; font-size: 1.4rem;
+      width: 40px; height: 40px; border-radius: 8px; cursor: pointer;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.1); }
+    .sidebar nav { padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .sidebar nav a {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border-radius: 10px;
+      color: #d6e6ef; text-decoration: none; font-weight: 500;
+      transition: background .2s, color .2s;
+    }
+    .sidebar nav a i { width: 22px; text-align: center; color: var(--cyan); }
+    .sidebar nav a:hover { background: rgba(59, 224, 230, 0.12); color: #fff; }
+
+    /* ==========================================================
+       HERO
+       ========================================================== */
+    .hero {
+      position: relative; overflow: hidden;
+      background:
+        radial-gradient(900px 500px at 85% 20%, rgba(59, 224, 230, 0.18), transparent 60%),
+        radial-gradient(700px 400px at 5% 90%, rgba(14, 159, 154, 0.2), transparent 60%),
+        linear-gradient(160deg, #07121c 0%, #0c2234 100%);
+      color: #fff;
+      padding: 64px 0 80px;
+    }
+    .hero .container {
+      display: block;
+    }
+    .hero .container > div { max-width: 760px; }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 800; line-height: 1.08;
+      font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+      margin: 0 0 18px; letter-spacing: -0.01em;
+    }
+    .hero p.lead { color: #b8cfdc; font-size: 1.08rem; max-width: 52ch; margin: 0 0 26px; }
+    .hero-card {
+      display: flex; gap: 16px; align-items: center;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+      border-radius: 16px; padding: 12px; max-width: 520px;
+    }
+    .hero-card img {
+      width: 110px; height: 110px; object-fit: cover; border-radius: 10px; flex-shrink: 0;
+      background: #1b3447;
+    }
+    .hero-card span { font-size: .95rem; color: #d7e8f2; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 26px;
+      background: var(--cyan); color: #04202a; font-weight: 700;
+      padding: 13px 24px; border-radius: 999px; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(59, 224, 230, 0.35); }
+
+    /* ==========================================================
+       SECTION HEADINGS
+       ========================================================== */
+    .section { padding: 56px 0 0; }
+    .section-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0 0 8px;
+    }
+    .section-sub { color: var(--muted); margin: 0 0 28px; max-width: 62ch; }
+
+    /* ==========================================================
+       FILTER CARD
+       ========================================================== */
+    .filter-card {
+      position: relative; z-index: 2;
+      margin-top: -44px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px;
+      box-shadow: 0 24px 60px rgba(8, 30, 48, 0.18);
+    }
+    .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .field label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 8px; }
+    .field select {
+      width: 100%; padding: 13px 14px; font: inherit; color: var(--text);
+      background: var(--field-bg); border: 1.5px solid var(--border);
+      border-radius: 10px; cursor: pointer;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field select:hover { border-color: var(--teal); }
+    .field select:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 4px rgba(14, 159, 154, 0.2); }
+    .filter-actions { display: flex; align-items: center; gap: 18px; margin-top: 24px; flex-wrap: wrap; }
+    .btn-search {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--teal), #0b6fb5);
+      color: #fff; border: 0; font: inherit; font-weight: 700;
+      padding: 14px 32px; border-radius: 999px; cursor: pointer;
+      box-shadow: 0 8px 22px rgba(14, 159, 154, 0.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-search:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(14, 159, 154, 0.45); }
+    .btn-search:active { transform: translateY(0) scale(0.98); }
+    .form-msg { font-size: .95rem; font-weight: 500; min-height: 1.4em; }
+    .form-msg.error { color: #d6336c; }
+    .form-msg.ok { color: var(--teal); }
+
+    /* ==========================================================
+       CATEGORY GRID
+       ========================================================== */
+    .grid {
+      display: grid; gap: 22px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .cat-card {
+      position: relative; min-height: 240px; border-radius: 18px; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 22px; color: #fff;
+      background-color: #12313f;
+      background-image:
+        linear-gradient(to top, rgba(4, 14, 22, 0.92) 8%, rgba(4, 14, 22, 0.45) 55%, rgba(4, 14, 22, 0.25) 100%),
+        var(--img),
+        linear-gradient(135deg, var(--c1, #0e4f5c), var(--c2, #0a2233));
+      background-size: cover; background-position: center;
+      box-shadow: 0 12px 30px rgba(8, 30, 48, 0.25);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .cat-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px rgba(8, 30, 48, 0.4); }
+    .cat-card h3 {
+      margin: 0; font-size: 1.35rem; font-weight: 800; color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+    .cat-card p { margin: 4px 0 16px; color: #e3f1f7; font-weight: 700; font-size: .92rem; text-shadow: 0 2px 8px rgba(0,0,0,.8); min-height: 1.3em; }
+    .btn-view {
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--teal); color: #fff; text-decoration: none;
+      font-weight: 700; font-size: .85rem; letter-spacing: .04em;
+      padding: 10px 20px; border-radius: 999px;
+      transition: background .2s, transform .2s;
+    }
+    .btn-view:hover { background: var(--cyan); color: #04202a; transform: translateX(3px); }
+
+    /* ==========================================================
+       FOOTER
+       ========================================================== */
+    footer { margin-top: 80px; background: var(--charcoal); color: #cfdde7; }
+    .foot-block { padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .foot-title { font-family: var(--font-display); font-weight: 800; color: #fff; font-size: 1.3rem; margin: 0 0 18px; }
+
+    /* Quotes carousel */
+    .quote-box {
+      position: relative; background: #f1f4f6; color: #1a2a38;
+      border-radius: 18px; padding: 44px 28px 36px; overflow: hidden;
+    }
+    .quote-box > .fa-quote-left {
+      position: absolute; top: 14px; left: 22px; font-size: 3.2rem; color: rgba(14, 159, 154, 0.3);
+    }
+    .quote-viewport { overflow: hidden; }
+    .quote-track { display: flex; transition: transform .7s cubic-bezier(.65, 0, .25, 1); }
+    .quote-slide { min-width: 100%; padding: 12px 8px 4px 56px; }
+    .quote-slide blockquote { margin: 0; font-family: var(--font-display); font-size: clamp(1.15rem, 2.4vw, 1.6rem); font-weight: 600; line-height: 1.4; }
+    .quote-slide cite { display: block; margin-top: 14px; font-style: normal; font-weight: 700; color: var(--teal-dark); }
+    .quote-dots { display: flex; gap: 8px; margin: 22px 0 0 64px; }
+    .quote-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; background: #b9c7d1; cursor: pointer; padding: 0; transition: background .2s, width .2s; }
+    .quote-dots button.active { background: var(--teal); width: 26px; border-radius: 6px; }
+
+    /* Banner */
+    .banner {
+      display: flex; align-items: center; gap: 24px;
+      background: linear-gradient(135deg, #0a1824, #0f2b3f);
+      border: 1px solid rgba(59, 224, 230, 0.2); border-radius: 18px; padding: 22px 26px;
+    }
+    .banner img { width: 96px; height: 96px; object-fit: contain; border-radius: 14px; background: rgba(255,255,255,.08); flex-shrink: 0; }
+    .banner h3 { margin: 0; font-family: var(--font-display); font-size: clamp(1.1rem, 2.4vw, 1.6rem); color: #fff; }
+    .banner p { margin: 4px 0 0; color: #a9c2d1; }
+
+    /* Contact */
+    .contact-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .contact-list li { display: flex; align-items: center; gap: 14px; font-weight: 700; letter-spacing: .02em; }
+    .contact-list .ico {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 1.2rem;
+      background: rgba(59, 224, 230, 0.12); border: 1px solid rgba(59, 224, 230, 0.25);
+    }
+    .contact-list small { display: block; font-weight: 400; color: #8fa8b8; letter-spacing: 0; }
+
+    /* Map */
+    .map-frame { width: 100%; height: 320px; border: 0; border-radius: 16px; filter: saturate(.9); }
+
+    /* Disclaimer */
+    .disclaimer {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.6);
+      border-radius: 14px; padding: 20px 22px; color: #ffe9c2;
+    }
+    .disclaimer .warn { font-size: 1.8rem; line-height: 1; }
+    .disclaimer p { margin: 0; }
+    .foot-bottom { padding: 22px 0 30px; text-align: center; font-size: .9rem; color: #7f98a8; }
+
+    /* ==========================================================
+       RESPONSIVE
+       ========================================================== */
+    @media (max-width: 960px) {
+      .hero .container { grid-template-columns: 1fr; gap: 36px; }
+      .filter-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .filter-grid { grid-template-columns: 1fr; }
+      .filter-card { padding: 22px; }
+      .hero { padding: 44px 0 72px; }
+      .banner { flex-direction: column; text-align: center; }
+      .quote-slide { padding-left: 8px; padding-top: 28px; }
+      .quote-dots { margin-left: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== STICKY NAVBAR ========== -->
+  <header class="navbar">
+    <div class="container">
+      <a href="#home" class="brand"><i class="fa-solid fa-dna"></i> RGU-MCB</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== SIDEBAR DRAWER ========== -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Site menu" aria-hidden="true">
+    <div class="sidebar-head">
+      <span>Menu</span>
+      <button class="close-btn" id="closeBtn" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <nav>
+      <a href="#home"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="#resources"><i class="fa-solid fa-book-open"></i> Study Resources</a>
+      <a href="#library"><i class="fa-solid fa-building-columns"></i> Digital Library</a>
+      <a href="#notice"><i class="fa-solid fa-bullhorn"></i> Portal Notice</a>
+    </nav>
+  </aside>
+
+  <main>
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="home">
+      <div class="container">
+        <div>
+          <h1>Department of Microbiology - Resource Portal</h1>
+          <p class="lead">Notes, previous year questions, lab manuals and e-books for every semester, organised in one place and shared by students for students.</p>
+
+          <div class="hero-card">
+            <!-- University Header Image -->
+            <img src="https://i.ibb.co/27qYgjJB/images.jpg" alt="images" border="0"> <!-- https://ibb.co/q37Fxqfm -->
+            <span>Raiganj University<br>Department of Microbiology</span>
+          </div>
+
+          <a class="hero-cta" href="#resources"><i class="fa-solid fa-magnifying-glass"></i> Find study materials</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== SECTION 1: FILTER FORM ========== -->
+    <section id="resources">
+      <div class="container">
+        <div class="filter-card">
+          <h2 class="section-title">Quick Search</h2>
+          <p class="section-sub">Choose your course details and open the matching Google Drive folder.</p>
+
+          <div class="filter-grid">
+            <div class="field">
+              <label for="course">Course Type</label>
+              <select id="course">
+                <option value="">Select course type</option>
+                <option value="B.Sc">B.Sc</option>
+                <option value="M.Sc">M.Sc</option>
+                <option value="PhD">PhD</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="semester">Semester</label>
+              <select id="semester">
+                <option value="">Select semester</option>
+                <option value="Semester 1">Semester 1</option>
+                <option value="Semester 2">Semester 2</option>
+                <option value="Semester 3">Semester 3</option>
+                <option value="Semester 4">Semester 4</option>
+                <option value="Semester 5">Semester 5</option>
+                <option value="Semester 6">Semester 6</option>
+                <option value="Semester 7">Semester 7</option>
+                <option value="Semester 8">Semester 8</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="category">Subject Category</label>
+              <select id="category">
+                <option value="">Select subject category</option>
+                <option value="Major-Theory">Major-Theory</option>
+                <option value="Major-Practical">Major-Practical</option>
+                <option value="Minor-Theory">Minor-Theory</option>
+                <option value="Minor-Practical">Minor-Practical</option>
+                <option value="SEC">SEC</option>
+                <option value="MDC">MDC</option>
+                
+                <option value="AEC">AEC</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="resource">Resource Type</label>
+              <select id="resource">
+                <option value="">Select resource type</option>
+                <option value="Notes">Notes</option>
+                <option value="PYQs">PYQs</option>
+                <option value="Lab Manuals">Lab Manuals</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-actions">
+            <button class="btn-search" id="searchBtn" type="button"><i class="fa-solid fa-magnifying-glass"></i> Search Files</button>
+            <span class="form-msg" id="formMsg" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 2: CATEGORY GRID ========== -->
+    <section class="section" id="library">
+      <div class="container">
+        <h2 class="section-title">Digital Library</h2>
+        <p class="section-sub">Browse every subject category directly. Each card opens its Google Drive folder in a new tab.</p>
+
+        <div class="grid">
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=70');--c1:#0e5a6b;--c2:#0a2233">
+            <h3>🔬 MAJOR-THEORY</h3><p>&nbsp;</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1cMaT5DmTCVmTnpkgZ_F3lHe47s6YBzxH" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=70');--c1:#8a5a14;--c2:#2a1a08">
+            <h3>🧫 MAJOR-PRACTICAL</h3><p>&nbsp;</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1SoFfE0Vq_cpn2unwGkMOsrI_5iy1dfpW" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=70');--c1:#2d4aa0;--c2:#0b1634">
+            <h3>🧬 MINOR-THEORY</h3><p>&nbsp;</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1YmIraI-w9wGLcm5mQtbSC1KdprcyjJm_" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=800&q=70');--c1:#2c7a4b;--c2:#0a2217">
+            <h3>🦎 MINOR-PRACTICAL</h3><p>&nbsp;</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1vjfOhYoDDCoR70shM0omVgkmgKcfqIGv" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=70');--c1:#a02d4a;--c2:#2a0a14">
+            <h3>🦠 SEC</h3><p>Skill Enhancement Course</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1WOCFNreEWur82jkxX4gq-KIPY1xtg_6w" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=70');--c1:#3e8e3a;--c2:#0d2410">
+            <h3>🌱 MDC</h3><p>Multidisciplinary Course</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/13BgDYutASclVSmqM0Ykr53sciQiR90rm" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=70');--c1:#1b7ea3;--c2:#06202e">
+            <h3>🌎 VAC</h3><p>Value Added Course</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1zolf2zAqy4d0_SAcPj0iwwJgteZt-FYJ" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=70');--c1:#6b3fa0;--c2:#180a2e">
+            <h3>📚 AEC</h3><p>Ability Enhancement Course</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1i7RwxhDlbY4KmQ5Wwybza_aMF14MZhRL" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+          <article class="cat-card" style="--img:url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=70');--c1:#0e7f8a;--c2:#071e26">
+            <h3>💻 E-BOOK</h3><p>&nbsp;</p>
+            <a class="btn-view" href="https://drive.google.com/drive/folders/1pSpT7JFfXOVq5HFGknGxPsmewc24u-gW" target="_blank" rel="noopener noreferrer">VIEW FILES <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <!-- INSPIRATION -->
+    <div class="foot-block">
+      <div class="container">
+        <h2 class="foot-title">Inspiration</h2>
+        <div class="quote-box" id="quoteBox">
+          <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+          <div class="quote-viewport">
+            <div class="quote-track" id="quoteTrack">
+              <div class="quote-slide">
+                <blockquote>"Success is not final; failure is not fatal: It is the courage to continue that counts."</blockquote>
+                <cite>— Winston S. Churchill</cite>
+              </div>
+              <div class="quote-slide">
+                <blockquote>"All power is within you; you can do anything and everything."</blockquote>
+                <cite>— Swami Vivekananda</cite>
+              </div>
+              <div class="quote-slide">
+                <blockquote>"In the middle of every difficulty lies opportunity."</blockquote>
+                <cite>— Albert Einstein</cite>
+              </div>
+            </div>
+          </div>
+          <div class="quote-dots" id="quoteDots">
+            <button type="button" class="active" aria-label="Show quote 1"></button>
+            <button type="button" aria-label="Show quote 2"></button>
+            <button type="button" aria-label="Show quote 3"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNER -->
+    <div class="foot-block">
+      <div class="container">
+        <div class="banner">
+          <!-- University Logo -->
+          
+          <div>
+            <h3>RGU-MCB, Department of Microbiology at Raiganj University</h3>
+            <p>Student-run study resources for the Microbiology community.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT INFO -->
+    <div class="foot-block">
+      <div class="container">
+        <h2 class="foot-title">Contact Info</h2>
+        <ul class="contact-list">
+          <li><span class="ico">🏫</span> RAIGANJ UNIVERSITY</li>
+          <li><span class="ico">🏢</span> DEPARTMENT OF MICROBIOLOGY</li>
+          <li><span class="ico">📍</span> RAIGANJ, WB-733134, INDIA</li>
+          <!-- Editable placeholders: replace the text below with real names / details -->
+          <li><span class="ico">👤</span> <span>RAJU BANIK<small>Portal Maintainer</small></span></li>
+          <li><span class="ico">👤</span> <span>All Students of the Depertment<small>Content Contributor</small></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LOCATION -->
+    <div class="foot-block">
+      <div class="container">
+        <h2 class="foot-title">Location</h2>
+        <!-- Location: https://maps.app.goo.gl/ZoQ3DNkonYvSEgpC6 | Swap the src below with any Google Maps "Embed a map" link -->
+        <iframe class="map-frame" title="Raiganj University location map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Raiganj+University,+University+Road,+College+Para,+Raiganj,+West+Bengal+733134&output=embed"></iframe>
+      </div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="foot-block" id="notice">
+      <div class="container">
+        <div class="disclaimer" role="note">
+          <span class="warn" aria-hidden="true">⚠️</span>
+          <p><strong>Disclaimer:</strong> This is an independent student-run educational portal created for academic support &amp; resources sharing. It is not an official website of Raiganj University &amp; is neither operated, endorsed, nor maintained by Raiganj University or any of its authorities. All content is provided for information &amp; education purpose only.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot-bottom container">© <span id="year"></span> RGU-MCB. All rights reserved.</div>
+  </footer>
+
+  <script>
+    /* ==========================================================
+       1. SIDEBAR DRAWER
+       ========================================================== */
+    const menuBtn = document.getElementById('menuBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      sidebar.setAttribute('aria-hidden', 'false');
+      menuBtn.setAttribute('aria-expanded', 'true');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      sidebar.setAttribute('aria-hidden', 'true');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    menuBtn.addEventListener('click', openSidebar);
+    closeBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    sidebar.querySelectorAll('nav a').forEach(function (a) { a.addEventListener('click', closeSidebar); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSidebar(); });
+
+    /* ==========================================================
+       2. QUICK SEARCH -> GOOGLE DRIVE LINKS
+       ----------------------------------------------------------
+       By default every Subject Category opens its main folder.
+       To send a specific combination to its own folder, add a line
+       to SPECIFIC_LINKS using this key format:
+       "Course|Semester|Category|Resource"
+       ========================================================== */
+    const CATEGORY_FOLDERS = {
+      "Major-Theory":    "https://drive.google.com/drive/folders/1cMaT5DmTCVmTnpkgZ_F3lHe47s6YBzxH",
+      "Major-Practical": "https://drive.google.com/drive/folders/1SoFfE0Vq_cpn2unwGkMOsrI_5iy1dfpW",
+      "Minor-Theory":    "https://drive.google.com/drive/folders/1YmIraI-w9wGLcm5mQtbSC1KdprcyjJm_",
+      "Minor-Practical": "https://drive.google.com/drive/folders/1vjfOhYoDDCoR70shM0omVgkmgKcfqIGv",
+      "SEC":             "https://drive.google.com/drive/folders/1WOCFNreEWur82jkxX4gq-KIPY1xtg_6w",
+      "MDC":             "https://drive.google.com/drive/folders/13BgDYutASclVSmqM0Ykr53sciQiR90rm",
+      "AEC":             "https://drive.google.com/drive/folders/1i7RwxhDlbY4KmQ5Wwybza_aMF14MZhRL"
+    };
+
+    const SPECIFIC_LINKS = {
+      // Example:
+      // "B.Sc|Semester 1|Major-Theory|Notes": "https://drive.google.com/drive/folders/YOUR_FOLDER_ID",
+    };
+
+    const formMsg = document.getElementById('formMsg');
+
+    function setMsg(text, type) {
+      formMsg.textContent = text;
+      formMsg.className = 'form-msg ' + (type || '');
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', function () {
+      const course = document.getElementById('course').value;
+      const semester = document.getElementById('semester').value;
+      const category = document.getElementById('category').value;
+      const resource = document.getElementById('resource').value;
+
+      if (!course || !semester || !category || !resource) {
+        setMsg('Please select all four options before searching.', 'error');
+        return;
+      }
+
+      const key = [course, semester, category, resource].join('|');
+      const link = SPECIFIC_LINKS[key] || CATEGORY_FOLDERS[category];
+
+      if (!link) {
+        setMsg('No folder is linked to this selection yet.', 'error');
+        return;
+      }
+
+      setMsg('Opening ' + category + ' folder for ' + course + ', ' + semester + '...', 'ok');
+      window.open(link, '_blank', 'noopener,noreferrer');
+    });
+
+    /* ==========================================================
+       4. QUOTES CAROUSEL (auto-slides every 3.5 seconds)
+       ========================================================== */
+    (function () {
+      const track = document.getElementById('quoteTrack');
+      const dots = document.querySelectorAll('#quoteDots button');
+      const box = document.getElementById('quoteBox');
+      const total = track.children.length;
+      let index = 0;
+      let timer = null;
+
+      function goTo(i) {
+        index = (i + total) % total;
+        track.style.transform = 'translateX(' + (-100 * index) + '%)';
+        dots.forEach(function (d, n) { d.classList.toggle('active', n === index); });
+      }
+      function start() { stop(); timer = setInterval(function () { goTo(index + 1); }, 3500); }
+      function stop() { if (timer) clearInterval(timer); }
+
+      dots.forEach(function (d, n) { d.addEventListener('click', function () { goTo(n); start(); }); });
+      box.addEventListener('mouseenter', stop);
+      box.addEventListener('mouseleave', start);
+      start();
+    })();
+
+    /* ==========================================================
+       5. FOOTER YEAR
+       ========================================================== */
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
